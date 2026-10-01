@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ian's Dashboard</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #e5e9f0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(99,102,241,.18), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(14,165,233,.14), transparent 55%),
+      #0a0e1a;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 24px 60px; }
+  header { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+  h1 {
+    margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -.02em;
+    background: linear-gradient(90deg, #fff, #a5b4fc 60%, #67e8f9);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .sub { color: #94a3b8; font-size: 13.5px; margin-top: 6px; }
+  .status { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #94a3b8; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399;
+         box-shadow: 0 0 0 0 rgba(52,211,153,.5); animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(52,211,153,.5);} 70% { box-shadow: 0 0 0 7px rgba(52,211,153,0);} 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0);} }
+  .pill { background: rgba(52,211,153,.12); border: 1px solid rgba(52,211,153,.35);
+          color: #6ee7b7; padding: 3px 9px; border-radius: 999px; font-weight: 600; }
+  .search { width: 100%; max-width: 380px; margin: 22px 0 8px; padding: 11px 16px;
+            border-radius: 12px; border: 1px solid rgba(255,255,255,.08);
+            background: rgba(255,255,255,.04); color: #e5e9f0; font-size: 14px; outline: none; }
+  .search:focus { border-color: rgba(129,140,248,.55); background: rgba(255,255,255,.06); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 15px; margin-top: 18px; }
+  a.tile {
+    text-decoration: none; color: inherit; position: relative;
+    background: rgba(255,255,255,.032); border: 1px solid rgba(255,255,255,.07);
+    border-radius: 18px; padding: 20px 14px 16px; display: flex; flex-direction: column;
+    align-items: center; text-align: center; gap: 9px; transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+  }
+  a.tile:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--c) 55%, transparent);
+                 box-shadow: 0 14px 30px -12px color-mix(in srgb, var(--c) 70%, transparent); }
+  .icon { width: 60px; height: 60px; border-radius: 17px; font-size: 30px; line-height: 60px;
+          background: color-mix(in srgb, var(--c) 20%, transparent);
+          border: 1px solid color-mix(in srgb, var(--c) 38%, transparent); }
+  .tname { font-weight: 650; font-size: 14.5px; line-height: 1.2; }
+  .tdesc { font-size: 11.5px; color: #8b94a7; line-height: 1.35;
+           display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 30px; }
+  .tmeta { font-size: 10.5px; color: #6b7488; margin-top: auto; }
+  .tmeta b { color: #a5b4fc; font-weight: 600; }
+  .dim { opacity: .55; }
+  h2 { font-size: 15px; color: #a5b4fc; font-weight: 650; margin: 38px 0 12px; letter-spacing: .01em; }
+  .sys { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: #cbd5e1;
+          background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+          padding: 6px 11px; border-radius: 999px; }
+  .chip .e { font-size: 14px; }
+  .chip .p { color: #6b7488; }
+  footer { margin-top: 44px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.06);
+           font-size: 12px; color: #6b7488; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Ian's Dashboard</h1>
+      <div class="sub">Every service on <span class="mono">YOUR_SERVER_IP</span> · auto-discovers new ones</div>
+    </div>
+    <div class="status"><span class="dot"></span><span class="pill">LIVE</span><span id="ago">updated just now</span></div>
+  </header>
+  <input class="search" id="q" type="search" placeholder="Filter services…" autocomplete="off">
+  <div class="grid" id="grid">
+<a class="tile" style="--c:#8b5cf6" href="http://YOUR_SERVER_IP:8850" target="_blank" rel="noopener" data-f="act training piper · act policy training 8850"><div class="icon">🤖</div><div class="tname">ACT Training</div><div class="tdesc">PiPER · ACT Policy Training</div><div class="tmeta">port <b>8850</b></div></a>
+<a class="tile" style="--c:#6366f1" href="http://YOUR_SERVER_IP:8000" target="_blank" rel="noopener" data-f="alumni cards alumni flashcard web app 8000"><div class="icon">🎓</div><div class="tname">Alumni Cards</div><div class="tdesc">Alumni Flashcard Web App</div><div class="tmeta">port <b>8000</b></div></a>
+<a class="tile" style="--c:#a16207" href="https://example.com" target="_blank" rel="noopener" data-f="coffee chats coffee chat tracker 8700"><div class="icon">☕</div><div class="tname">Coffee Chats</div><div class="tdesc">Coffee Chat Tracker</div><div class="tmeta">port <b>8700</b> · example.com</div></a>
+<a class="tile" style="--c:#0ea5e9" href="http://YOUR_SERVER_IP:8520" target="_blank" rel="noopener" data-f="epq gp explorer epq h2-solar aircraft gp explorer 8520"><div class="icon">✈️</div><div class="tname">EPQ GP Explorer</div><div class="tdesc">EPQ H2-Solar Aircraft GP Explorer</div><div class="tmeta">port <b>8520</b></div></a>
+<a class="tile" style="--c:#ef4444" href="http://YOUR_SERVER_IP:8780" target="_blank" rel="noopener" data-f="fia flashcards fia2026 exhibitor flashcards 8780"><div class="icon">🃏</div><div class="tname">FIA Flashcards</div><div class="tdesc">FIA2026 Exhibitor Flashcards</div><div class="tmeta">port <b>8780</b></div></a>
+<a class="tile" style="--c:#f97316" href="https://library.example.com" target="_blank" rel="noopener" data-f="home library 家庭图书馆 · home library 8800"><div class="icon">📚</div><div class="tname">Home Library</div><div class="tdesc">家庭图书馆 · Home Library</div><div class="tmeta">port <b>8800</b> · library.example.com</div></a>
+<a class="tile" style="--c:#f59e0b" href="http://YOUR_SERVER_IP:8640" target="_blank" rel="noopener" data-f="infographic maker izhang aviation · mission control 8640"><div class="icon">🛩️</div><div class="tname">Infographic Maker</div><div class="tdesc">IZhang Aviation · Mission Control</div><div class="tmeta">port <b>8640</b></div></a>
+<a class="tile" style="--c:#14b8a6" href="http://YOUR_SERVER_IP:8830" target="_blank" rel="noopener" data-f="ivy swim ivy swim analytics 8830"><div class="icon">🏊</div><div class="tname">Ivy Swim</div><div class="tdesc">Ivy Swim Analytics</div><div class="tmeta">port <b>8830</b></div></a>
+<a class="tile" style="--c:#ec4899" href="http://YOUR_SERVER_IP:8790" target="_blank" rel="noopener" data-f="piper act /opt/piper-act 8790"><div class="icon">🤖</div><div class="tname">Piper Act</div><div class="tdesc">/opt/piper-act</div><div class="tmeta">port <b>8790</b></div></a>
+<a class="tile" style="--c:#64748b" href="http://10.0.0.1:8555" target="_blank" rel="noopener" data-f="rax panel rax3000m vpn rules panel 8555"><div class="icon">🔐</div><div class="tname">RAX Panel</div><div class="tdesc">RAX3000M VPN rules panel</div><div class="tmeta">port <b>8555</b> · VPN only</div></a>
+<a class="tile" style="--c:#10b981" href="http://YOUR_SERVER_IP:8760" target="_blank" rel="noopener" data-f="wechat exporter wechat article exporter 8760"><div class="icon">📄</div><div class="tname">WeChat Exporter</div><div class="tdesc">WeChat Article Exporter</div><div class="tmeta">port <b>8760</b></div></a>
+  </div>
+  <h2>System &amp; internal</h2>
+  <div class="sys">
+<span class="chip"><span class="e">🔑</span>SSH<span class="p">:22</span></span>
+<span class="chip"><span class="e">🌐</span>Caddy (HTTP)<span class="p">:80</span></span>
+<span class="chip"><span class="e">🌐</span>Caddy (HTTPS)<span class="p">:443</span></span>
+<span class="chip"><span class="e">🔧</span>Caddy admin API<span class="p">:2019</span></span>
+<span class="chip"><span class="e">🐘</span>PostgreSQL 16<span class="p">:5432</span></span>
+<span class="chip"><span class="e">🔑</span>SSH (alt)<span class="p">:8022</span></span>
+<span class="chip"><span class="e">🛡️</span>Xray VLESS+Reality<span class="p">:8443</span></span>
+<span class="chip"><span class="e">🔄</span>Syncthing Discovery<span class="p">:8444</span></span>
+<span class="chip"><span class="e">💬</span>WeCom Bot webhook<span class="p">:8642</span></span>
+<span class="chip"><span class="e">👁️</span>OCR Watch proxy<span class="p">:9765</span></span>
+<span class="chip"><span class="e">🔄</span>Syncthing Relay<span class="p">:22067</span></span>
+<span class="chip"><span class="e">🔄</span>Syncthing Relay (TLS)<span class="p">:22070</span></span>
+  </div>
+  <footer>
+    11 services detected · list rebuilds every 60&nbsp;s and this page auto-refreshes ·
+    <span class="mono">2026-10-01 23:04:59</span>
+  </footer>
+</div>
+<script>
+  var SCAN_TS = 1790895899;
+  function ago() {
+    var s = Math.floor((Date.now()/1000) - SCAN_TS);
+    var el = document.getElementById('ago');
+    if (s < 5) el.textContent = 'updated just now';
+    else if (s < 60) el.textContent = 'updated ' + s + 's ago';
+    else el.textContent = 'updated ' + Math.floor(s/60) + 'm ' + (s%60) + 's ago';
+  }
+  setInterval(ago, 1000); ago();
+  document.getElementById('q').addEventListener('input', function(e){
+    var v = e.target.value.toLowerCase();
+    document.querySelectorAll('#grid .tile').forEach(function(t){
+      t.style.display = (t.dataset.f || '').indexOf(v) === -1 ? 'none' : '';
+    });
+  });
+  setTimeout(function(){ location.reload(); }, 60000);
+</script>
+</body>
+</html>
